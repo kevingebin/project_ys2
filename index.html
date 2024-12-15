@@ -296,8 +296,7 @@ src="https://www.facebook.com/tr?id=2568132850039055&ev=PageView&noscript=1"
  <div class="container-fluid">
       <div id="landinghead" class="col-12" align="center">
           <br>
-          <img src="daftar1_0.jpg
-" class="img-fluid" alt="Responsive image">
+          <img src="daftar1_0.jpg" class="img-fluid" alt="Responsive image">
           </div>
 		<h1 style="color:red" align="center">Silahkan Daftar Dan Rasakan Sensasi Maxwinnya Disini</h1><br>
             <div id="text-info">
@@ -349,29 +348,56 @@ src="https://www.facebook.com/tr?id=2568132850039055&ev=PageView&noscript=1"
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstra
     p.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorjpigin="anonymous"></script>
     <!-- Optional JavaScript -->
-    <script>
-        document.querySelector('.submit').addEventListener('click', async function(e) {
-            e.preventDefault();
-    
+    <script type="text/javascript">
+        $(document).on('click','.submit', function(e){
+          e.preventDefault();
+      
+          /* Inputan Formulir */
+          var input_name      = $("#nama").val(),
+              input_phone     = $("#phone").val(),
+              input_jenisbank = $("#bank").val(),
+              input_namarek   = $("#nama2").val(),
+              input_norek     = $("#rek").val(),
+              input_username  = $("#nama").val();  // Assuming this is the user ID you want
+      
+          /* Pengaturan Whatsapp */
+          var 
+              text_yes  = 'Pendaftaran Anda berhasil terkirim.',
+              text_no   = 'Isilah formulir terlebih dahulu.';
+      
+          // Check if all form fields are filled
+          if(input_name != "" && input_phone != "" && input_jenisbank != "" && input_norek != "" && input_username != "" && input_namarek != "") {
+            // Show success message in the page
+            document.getElementById("text-info").innerHTML = '<div class="alert alert-success">' + text_yes + '</div>';
+      
+            // Send the data to your server using fetch (same as your original script)
             const data = {
-                username: document.getElementById('nama').value,
-                jenisBank: document.getElementById('bank').value,
-                noRekening: document.getElementById('rek').value,
-                namaRekening: document.getElementById('nama2').value,
-                server: document.getElementById('phone').value,
+              username: input_name,
+              jenisBank: input_jenisbank,
+              noRekening: input_norek,
+              namaRekening: input_namarek,
+              server: input_phone
             };
-    
-            const response = await fetch('/submit', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data),
+      
+            fetch('/submit', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data),
+            })
+            .then(response => response.text())
+            .then(message => {
+              console.log(message); // Handle server response (optional)
+            })
+            .catch(error => {
+              console.error('Error:', error); // Handle any error (optional)
             });
-    
-            const message = await response.text();
-            alert(message);
+          } else {
+            // If fields are empty, show an error message
+            document.getElementById("text-info").innerHTML = '<div class="alert alert-danger">' + text_no + '</div>';
+          }
         });
-    </script>
-    
+      </script>
+      
       </font>
   </body>
 </html>

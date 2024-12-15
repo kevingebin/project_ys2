@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	_ "github.com/denisenkom/go-mssqldb"
+	"github.com/rs/cors"
 )
 
 type FormData struct {
@@ -60,12 +61,29 @@ func submitHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Data saved successfully"))
 }
 
+// Serve the index.html file when visiting the root route
+func indexHandler(w http.ResponseWriter, r *http.Request) {
+	// Serve index.html from the current directory
+	http.ServeFile(w, r, "index.html")
+	// Or, if you use a static folder, use:
+	// http.ServeFile(w, r, "static/index.html")
+}
+
 func main() {
 	initDB()
 	defer db.Close()
 
-	http.HandleFunc("/submit", submitHandler)
+	// Enable CORS for all routes
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"}, // Allow all origins (you can restrict this)
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
+		AllowedHeaders: []string{"Content-Type"},
+	})
+
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", indexHandler)
+	mux.HandleFunc("/submit", submitHandler)
 
 	fmt.Println("Server is running on port 8080...")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(":8080", c.Handler(mux))) // Wrap the handler with CORS
 }
